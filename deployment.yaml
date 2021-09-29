@@ -9,18 +9,6 @@ spec:
   selector:
     matchLabels:
       app: bestapp
-  affinity:
-    podAntiAffinity:                                        #Разносим поды по зонам мультизонального кластера
-      preferredDuringSchedulingIgnoredDuringExecution:      #preffered - потому что будут ситуации, когда в пике награзки работают 4 пода, а зоны 3. Тогда
-      - weight: 100                                         #мы должны отработать разнесение по зонам только как мягкое условие. Вес 100 - чтобы повысить
-        podAffinityTerm:                                    #влияние этого правила среди других прочих.
-          labelSelector:
-            matchExpressions:
-            - key: app                                      #Собственно, условие: если в этой зоне (которая есть лейблом на ноде) уже есть под с лейблом bestapp,
-              operator: In                                  #то не скедулить под на эту ноду.
-              values:
-              - bestapp
-          topologyKey: topology.kubernetes.io/zone
   template:
     metadata:
       labels:
